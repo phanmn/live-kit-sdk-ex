@@ -39,7 +39,7 @@ defmodule LiveKitSdkEx.TokenVerifier do
   ## Examples
 
       iex> verifier = TokenVerifier.new(api_key: "key", api_secret: "secret")
-      iex> TokenVerifier.verify_safe(verifier, jwt_token)
+      iex> TokenVerifier.verify(verifier, jwt_token)
       {:ok, %LiveKit.ClaimGrant{...}}
   """
   def verify(%__MODULE__{api_key: api_key, api_secret: api_secret}, token) do
