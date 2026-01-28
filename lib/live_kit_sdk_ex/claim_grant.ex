@@ -1,4 +1,9 @@
 defmodule LiveKitSdkEx.ClaimGrant do
+  require Protocol
+  Protocol.derive(JSON.Encoder, LiveKitProtocolEx.RoomConfiguration, except: [:__uf__])
+  Protocol.derive(JSON.Encoder, LiveKitProtocolEx.RoomAgentDispatch, except: [:__uf__])
+  Protocol.derive(JSON.Encoder, LiveKitProtocolEx.RoomEgress, except: [:__uf__])
+
   use ExConstructor
 
   @moduledoc """
@@ -52,12 +57,51 @@ defmodule LiveKitSdkEx.ClaimGrant do
         v
     end
     |> case do
-      struct = %{video: video, sip: sip} ->
+      %{video: video, sip: sip} = struct ->
         %{
           struct
           | video: LiveKitSdkEx.VideoGrant.from_map(video),
             sip: LiveKitSdkEx.SIPGrant.from_map(sip)
         }
+    end
+    |> case do
+      %{room_config: room_config} = struct when room_config != nil ->
+        %{
+          struct
+          | room_config:
+              ExConstructor.populate_struct(%LiveKitProtocolEx.RoomConfiguration{}, room_config)
+              |> case do
+                %{agents: agents} = room_config when is_list(agents) ->
+                  %{
+                    room_config
+                    | agents:
+                        agents
+                        |> Enum.map(fn agent ->
+                          ExConstructor.populate_struct(
+                            %LiveKitProtocolEx.RoomAgentDispatch{},
+                            agent
+                          )
+                        end)
+                  }
+
+                room_config ->
+                  room_config
+              end
+              |> case do
+                %{egress: egress} = room_config when egress != nil ->
+                  %{
+                    room_config
+                    | egress:
+                        ExConstructor.populate_struct(%LiveKitProtocolEx.RoomEgress{}, egress)
+                  }
+
+                room_config ->
+                  room_config
+              end
+        }
+
+      v ->
+        v
     end
   end
 
@@ -135,7 +179,11 @@ defmodule LiveKitSdkEx.ClaimGrant do
     |> maybe_put("metadata", grant.metadata)
     |> maybe_put("attributes", grant.attributes)
     |> maybe_put("sha256", grant.sha256)
-    |> maybe_put("roomConfig", grant.room_config)
+    |> maybe_put("roomConfig", grant.room_config, fn v ->
+      JSON.encode!(v)
+      |> JSON.decode!()
+      |> Recase.Enumerable.convert_keys(&Recase.to_camel/1)
+    end)
     |> maybe_put("roomPreset", grant.room_preset)
   end
 

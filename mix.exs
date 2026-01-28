@@ -22,7 +22,9 @@ defmodule LiveKitSdkEx.MixProject do
   defp deps do
     [
       {:joken, "~> 2.6"},
-      {:exconstructor, "~> 1.2"}
+      {:exconstructor, "~> 1.2"},
+      {:live_kit_protocol_ex, git: "git@github.com:phanmn/livekit-protocol-ex.git", branch: "main"},
+      {:recase, "~> 0.5"}
     ]
   end
 end
