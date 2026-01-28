@@ -37,7 +37,7 @@ defmodule LiveKitSdkEx.ClaimGrant do
   end
 
   @doc """
-  Creates a ClaimGrant from a map (equivalent to Ruby's from_hash).
+  Creates a ClaimGrant from a map.
   """
   def from_map(nil), do: nil
 

@@ -26,6 +26,11 @@ defmodule LiveKitSdkEx.AccessToken do
         }
 
   @doc """
+  Returns the signing algorithm used for JWT encoding.
+  """
+  def signing_algorithm, do: @signing_algorithm
+
+  @doc """
   Creates a new AccessToken instance.
 
   ## Options
