@@ -45,6 +45,13 @@ defmodule LiveKitSdkEx.ClaimGrant do
     map
     |> new()
     |> case do
+      %{identity: nil} = struct ->
+        %{struct | identity: map |> Map.get("sub")}
+
+      v ->
+        v
+    end
+    |> case do
       struct = %{video: video, sip: sip} ->
         %{
           struct
