@@ -138,7 +138,7 @@ defmodule LiveKitSdkEx.AccessToken do
       iex> AccessToken.to_jwt(token)
       {:ok, "eyJhbGc..."}
   """
-  def to_jwt(%__MODULE__{grants: %{video: video, sip: sip}}) when is_nil(video) or is_nil(sip) do
+  def to_jwt(%__MODULE__{grants: %{video: video, sip: sip}}) when is_nil(video) and is_nil(sip) do
     {:error, "VideoGrant or SIPGrant is required"}
   end
 
