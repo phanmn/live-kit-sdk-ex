@@ -44,10 +44,17 @@ defmodule LiveKitSdkEx.TokenVerifier do
   """
   def verify(%__MODULE__{api_key: api_key, api_secret: api_secret}, token) do
     signer = Joken.Signer.create(LiveKitSdkEx.AccessToken.signing_algorithm(), api_secret)
+    now = System.system_time(:second)
 
     token
     |> Joken.verify(signer)
     |> case do
+      {:ok, %{"nbf" => nbf}} when nbf < now ->
+        {:error, :token_not_yet_valid}
+
+      {:ok, %{"exp" => exp}} when exp > now ->
+        {:error, :expired}
+
       {:ok, %{"iss" => ^api_key} = claims} ->
         {:ok, LiveKitSdkEx.ClaimGrant.from_map(claims)}
 
