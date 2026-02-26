@@ -65,4 +65,8 @@ defmodule LiveKitSdkEx.TokenVerifier do
         e
     end
   end
+
+  def peek_claims(token) do
+    Joken.peek_claims(token)
+  end
 end
