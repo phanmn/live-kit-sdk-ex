@@ -52,7 +52,7 @@ defmodule LiveKitSdkEx.TokenVerifier do
       {:ok, %{"nbf" => nbf}} when nbf > now ->
         {:error, :token_not_yet_valid}
 
-      {:ok, %{"exp" => exp}} when exp > now ->
+      {:ok, %{"exp" => exp}} when exp < now ->
         {:error, :expired}
 
       {:ok, %{"iss" => ^api_key} = claims} ->
