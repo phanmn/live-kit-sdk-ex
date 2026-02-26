@@ -49,7 +49,7 @@ defmodule LiveKitSdkEx.TokenVerifier do
     token
     |> Joken.verify(signer)
     |> case do
-      {:ok, %{"nbf" => nbf}} when nbf < now ->
+      {:ok, %{"nbf" => nbf}} when nbf > now ->
         {:error, :token_not_yet_valid}
 
       {:ok, %{"exp" => exp}} when exp > now ->
